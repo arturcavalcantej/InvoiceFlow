@@ -22,7 +22,7 @@ public class Supplier {
     private String email;
 
     @Column(nullable = false, length = 13)
-    private Number phone;
+    private String phone;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
