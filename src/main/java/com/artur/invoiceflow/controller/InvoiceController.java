@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +26,7 @@ public class InvoiceController {
 
     @GetMapping("/{id}")
     public InvoiceResponse get(@PathVariable Long id) {
-        // implemente o método get(id) no service quando quiser
-        throw new UnsupportedOperationException("TODO: implementar get(id) no InvoiceService");
+        return service.get(id);
     }
 
     @GetMapping
@@ -37,15 +37,11 @@ public class InvoiceController {
             @RequestParam(required = false) LocalDate to,
             Pageable pageable
     ) {
-        // se seu service hoje só tem list(Pageable), ajuste aqui também
         return service.list(supplierId, status, from, to, pageable);
-        // quando evoluir:
-        // return service.list(supplierId, status, from, to, pageable);
     }
 
-    // opcional se fizer o “anexar arquivos depois”
-    // @PostMapping("/{id}/files")
-    // public InvoiceResponse attach(@PathVariable Long id, @RequestBody List<Long> fileIds) {
-    //     return service.attachFiles(id, fileIds);
-    // }
+    @PostMapping("/{id}/files")
+    public InvoiceResponse attach(@PathVariable Long id, @RequestBody List<Long> fileIds) {
+        return service.attachFiles(id, fileIds);
+    }
 }
