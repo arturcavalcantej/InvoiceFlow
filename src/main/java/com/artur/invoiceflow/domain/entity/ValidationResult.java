@@ -5,18 +5,21 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
-@Setter @Getter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity @Table(name = "validation_result")
 public class ValidationResult {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "invoice_id", nullable = false)
-    private Long invoiceId;
+    // relação JPA (recomendado)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_id", nullable = false)
+    private Invoice invoice;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "rules_passed", columnDefinition = "jsonb")
@@ -30,5 +33,5 @@ public class ValidationResult {
     private Integer score;
 
     @Column(name = "validated_at", nullable = false)
-    private LocalDateTime validatedAt;
+    private OffsetDateTime validatedAt;
 }

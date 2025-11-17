@@ -5,14 +5,15 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@Setter @Getter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity @Table(name = "invoice_item")
 public class InvoiceItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id", nullable = false)
     private Invoice invoice;
 
@@ -33,5 +34,4 @@ public class InvoiceItem {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
-
 }

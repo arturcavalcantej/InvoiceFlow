@@ -7,16 +7,25 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-@Entity @Table(name = "invoice")
+@Entity
+@Table(
+        name = "invoice",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_invoice_supplier_number_series",
+                columnNames = {"supplier_id", "number", "series"}
+        )
+)
 public class Invoice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
@@ -33,25 +42,32 @@ public class Invoice {
     private BigDecimal total;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private InvoiceStatus status;
 
     @Column(name = "raw_text", columnDefinition = "text")
     private String rawText;
 
+    // simples: jsonb como String (mantém sua V1/V2)
     @Column(columnDefinition = "jsonb")
     private String errors;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private String createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(nullable = false)
-    private String updatedAt;
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
+
+    // Navegação (opcional, mas recomendado)
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<InvoiceItem> items;
+
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.PERSIST)
+    private List<DocumentFile> files;
 
     public enum InvoiceStatus {
         RECEIVED, EXTRACTED, VALIDATED, REJECTED
     }
-
 }
