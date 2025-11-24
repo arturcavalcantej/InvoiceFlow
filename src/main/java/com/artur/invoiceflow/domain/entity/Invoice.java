@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.hibernate.annotations.JdbcTypeCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -49,8 +52,9 @@ public class Invoice {
     private String rawText;
 
     // simples: jsonb como String (mantém sua V1/V2)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String errors;
+    private JsonNode errors;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
